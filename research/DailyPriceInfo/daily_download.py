@@ -98,7 +98,7 @@ def generate_reference_xls():
             continue
 
         #test code
-        #if count > 20:
+        #if count > 100:
         #     break
 
         month = utils.last_month()
@@ -122,15 +122,9 @@ def generate_reference_xls():
         if(len(close_price) >= 4):
             continous_up = True
             continous_down = True
-            for i in range(0, 3):
-                if(close_price[i] < close_price[i+1]):
-                    continous_up = False
-                    break
 
-            for i in range(0, 3):
-                if(close_price[i] > close_price[i+1]):
-                    continous_down = False
-                    break
+            from trend_analysis_utils import get_trend_type
+            trend = get_trend_type(close_price)
 
         #row = read_worksheet.nrows
         #read_worksheet.write(row, 0, id)
@@ -157,16 +151,10 @@ def generate_reference_xls():
             v_ma20 = history_data[u'v_ma20'][0]
             turnover = history_data[u'turnover'][0]
 
-            trend = ''
+
             #
             #[id, 3_day_trend, date, open price, close price, high, low, volume, price_change, p_change, ma5, ma10, ma20, v_ma5, v_ma10, v_ma20, turnover]
             #
-            if(continous_up):
-                trend = 'up'
-            elif (continous_down):
-                trend = 'down'
-            else:
-                trend = 'NA'
 
             record.append(id)
             record.append(trend)
@@ -323,7 +311,7 @@ def generate_training_data():
 
     for i in range(len(rows)):
         trend = rows[i][1]
-        if (trend == 'up') or (trend == 'down'):
+        if (trend != 'NA'):
             id = rows[i][0]
             three_days_ago = rows[i][3]
 
